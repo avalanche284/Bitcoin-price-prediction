@@ -30,7 +30,7 @@ library(readxl)
 library(forecast)
 
 # Importing the dataset
-btc <- read_excel("/Users/simon/Documents/classes/Financial data science/final pres/Bartoszewicz-btc.xlsx")
+btc <- read_excel("/Users/simon/github_repos/Bitcoin-price-prediction/dataset.xlsx")
 
 # Creating a copy of the dataset on which operations are performed
 data <- btc
@@ -49,7 +49,7 @@ boxplot(data$btcusd, main = "Boxplot of the Bitcoin price (Source: Google Financ
 # Plotting btc price change over time
 ggplot(data = data, aes(Date, btcusd)) + geom_line(colour='gold')
 
-# Comparison --> Comparing the movement in price
+# Comparison -- Comparing the movement in price
 ggplot(data, aes(Date)) + 
   geom_line(aes(y = btcusd, colour = "btcusd")) + 
   geom_line(aes(y = amd, colour = "amd")) + 
