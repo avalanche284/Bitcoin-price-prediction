@@ -350,7 +350,8 @@ n_train <- round(nrow(data3)*0.8)
 data_all   <- data3[sample(nrow(data3)), ]          
 data_train <- as.data.frame(data3[1:n_train, ])
 data_test <- as.data.frame(data3[(n_train+1):nrow(data3), ])
-
+###########################################################
+# LINEAR REGRESSION
 # Multiple linear regression on the training dataset
 fit1     <- lm(btcusd ~ ., data_train)
 summary(fit1)
