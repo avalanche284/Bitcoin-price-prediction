@@ -107,16 +107,6 @@ pcor_mat3       <- p_correlations3$estimate
 corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
 corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
 
-# Setting a random seed so that results can be reproduced
-set.seed(1000)
-
-# Splitting the dataset into training and testing samples 
-n_train <- round(nrow(data3)*0.8) 
-
-data_all   <- data3[sample(nrow(data3)), ]          
-data_train <- as.data.frame(data3[1:n_train, ])
-data_test <- as.data.frame(data3[(n_train+1):nrow(data3), ])
-
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -125,20 +115,67 @@ data_test <- as.data.frame(data3[(n_train+1):nrow(data3), ])
 ##############################################################################
 ##############################################################################
 
+# Setting a random seed so that results can be reproduced
+set.seed(1000)
+
 # Multiple linear regression on the training dataset
-fit1     <- lm(btcusd ~ amd + nvda, data_train)
-summary(fit1)
+fit_1     <- lm(btcusd ~ ., data3)
+summary(fit_1)
 
 # Performing a stepwise linear regression 
-fit_step_f <- step(fit1, direction='forward')
-summary(fit_step_f)
+fit_1_step_f <- step(fit_1, direction='forward')
+summary(fit_1_step_f)
 
-fit_step_b <- step(fit1, direction='backward')
-summary(fit_step_b)
+fit_1_step_b <- step(fit_1, direction='backward')
+summary(fit_1_step_b)
 
-fit_step   <- step(fit1, direction='both')
-summary(fit_step)
-# plot(fit_step)
+fit_1_step   <- step(fit_1, direction='both')
+summary(fit_1_step)
+# plot(fit_1_step)
+
+
+# Multiple linear regression on the training dataset
+fit_1     <- lm(btcusd ~ ., data3)
+summary(fit_1)
+
+# Performing a stepwise linear regression 
+fit_1_step_f <- step(fit_1, direction='forward')
+summary(fit_1_step_f)
+
+fit_1_step_b <- step(fit_1, direction='backward')
+summary(fit_1_step_b)
+
+fit_1_step   <- step(fit_1, direction='both')
+summary(fit_1_step)
+# plot(fit_1_step)
+
+##############################################################################
+# PREDICTIONS
+##############################################################################
+
+# Making predictions on the test dataset
+predictions       <- predict(fit_1_step,data_test)
+results           <- cbind(data_test$btcusd,predictions) 
+colnames(results) <- c('Real','Predicted')
+results           <- as.data.frame(results)
+
+# Calculating error measures
+# MSE
+mse  <- mean((results$Real-results$Predicted)^2)
+print(mse)
+
+# RMSE
+rmse     <- sqrt(mse)
+print(rmse)
+
+# MAE
+mae <- mean(abs(results$Real-results$Predicted))
+print(mae)
+
+# Diebold-Mariano test
+dmar<-dm.test(fit_1_step$residuals,fit_1$residuals,alternative="two.sided")
+dmar
+
 
 
 
