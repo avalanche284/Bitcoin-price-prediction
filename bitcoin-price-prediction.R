@@ -107,6 +107,10 @@ pcor_mat3       <- p_correlations3$estimate
 corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
 corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
 
+data4 <- as.data.frame(data3)
+
+# Setting a random seed so that results can be reproduced
+set.seed(1000)
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -115,11 +119,8 @@ corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE)
 ##############################################################################
 ##############################################################################
 
-# Setting a random seed so that results can be reproduced
-set.seed(1000)
-
 # Multiple linear regression on the training dataset
-fit_1     <- lm(btcusd ~ ., data3)
+fit_1     <- lm(btcusd ~ ., data4)
 summary(fit_1)
 
 # Performing a stepwise linear regression 
@@ -129,53 +130,92 @@ summary(fit_1_step_f)
 fit_1_step_b <- step(fit_1, direction='backward')
 summary(fit_1_step_b)
 
-fit_1_step   <- step(fit_1, direction='both')
-summary(fit_1_step)
+fit_1_step <- step(fit_1, direction='both')
+summary(fit_1_step) # showing the best regression
 # plot(fit_1_step)
 
+# PREDICTION on the same dataset
 
-# Multiple linear regression on the training dataset
-fit_1     <- lm(btcusd ~ ., data3)
-summary(fit_1)
+data4_test <- data4[round(0.8*nrow(data4)):nrow(data4),]
 
-# Performing a stepwise linear regression 
-fit_1_step_f <- step(fit_1, direction='forward')
-summary(fit_1_step_f)
-
-fit_1_step_b <- step(fit_1, direction='backward')
-summary(fit_1_step_b)
-
-fit_1_step   <- step(fit_1, direction='both')
-summary(fit_1_step)
-# plot(fit_1_step)
-
-##############################################################################
-# PREDICTIONS
-##############################################################################
-
-# Making predictions on the test dataset
-predictions       <- predict(fit_1_step,data_test)
-results           <- cbind(data_test$btcusd,predictions) 
-colnames(results) <- c('Real','Predicted')
-results           <- as.data.frame(results)
+# Making predictions on the data4_test
+predictions_1 <- predict(fit_1_step,data4_test)
+results_1 <- cbind(data4_test$btcusd,predictions_1) 
+colnames(results_1) <- c('Real','Predicted')
+results_1 <- as.data.frame(results_1)
 
 # Calculating error measures
 # MSE
-mse  <- mean((results$Real-results$Predicted)^2)
-print(mse)
+mse_1  <- mean((results_1$Real-results_1$Predicted)^2)
+print(mse_1)
 
 # RMSE
-rmse     <- sqrt(mse)
-print(rmse)
+rmse_1 <- sqrt(mse_1)
+print(rmse_1)
 
 # MAE
-mae <- mean(abs(results$Real-results$Predicted))
-print(mae)
+mae_1 <- mean(abs(results_1$Real-results_1$Predicted))
+print(mae_1)
 
 # Diebold-Mariano test
 dmar<-dm.test(fit_1_step$residuals,fit_1$residuals,alternative="two.sided")
 dmar
 
 
+##############################################################################
+##############################################################################
+##############################################################################
+# 1st model -- bitcoin price against GPUs manufacturers stock prices
+##############################################################################
+##############################################################################
+##############################################################################
+
+# Creating a dataset containing average stock prices as follows:
+# GPU <- amd + nvda
+# Tech <- googl + aapl + meta + amzn + nflx + msft
+# Cards <- v + ma + axp + dfs
+# Tsla <- tsla
+
+# Multiple linear regression on the training dataset
+fit_GPU <- lm(btcusd ~ ., data4)
+summary(fit_1)
+
+# Performing a stepwise linear regression 
+fit_1_step_f <- step(fit_1, direction='forward')
+summary(fit_1_step_f)
+
+fit_1_step_b <- step(fit_1, direction='backward')
+summary(fit_1_step_b)
+
+fit_1_step <- step(fit_1, direction='both')
+summary(fit_1_step) # showing the best regression
+# plot(fit_1_step)
+
+# PREDICTION on the same dataset
+
+data4_test <- data4[round(0.8*nrow(data4)):nrow(data4),]
+
+# Making predictions on the data4_test
+predictions_1 <- predict(fit_1_step,data4_test)
+results_1 <- cbind(data4_test$btcusd,predictions_1) 
+colnames(results_1) <- c('Real','Predicted')
+results_1 <- as.data.frame(results_1)
+
+# Calculating error measures
+# MSE
+mse_1  <- mean((results_1$Real-results_1$Predicted)^2)
+print(mse_1)
+
+# RMSE
+rmse_1 <- sqrt(mse_1)
+print(rmse_1)
+
+# MAE
+mae_1 <- mean(abs(results_1$Real-results_1$Predicted))
+print(mae_1)
+
+# Diebold-Mariano test
+dmar<-dm.test(fit_1_step$residuals,fit_1$residuals,alternative="two.sided")
+dmar
 
 
