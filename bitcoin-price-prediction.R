@@ -175,6 +175,20 @@ dmar
 # Tech <- googl + aapl + meta + amzn + nflx + msft
 # Cards <- v + ma + axp + dfs
 # Tsla <- tsla
+# data1 a dataset containing prics before eliminating skewness
+GPU <- data.frame((data1$nvda + data1$amd)/2)
+TECH <- data.frame((data1$meta + data1$aapl + data1$amzn + data1$nflx + data1$googl + data1$msft)/6)
+CARD <- data.frame((data1$v + data1$ma + data1$dfs + data1$axp)/4)
+TSLA <- data.frame(data1$tsla)
+
+data_gr <- cbind(data1$btcusd, GPU, TECH, CARD, TSLA)
+colnames(data_gr) <- c("btcusd", "GPU", "TECH", "CARD", "TSLA")
+
+summary(data_gr)
+hist(data_gr)
+
+# now the new dataset can be tansformed to remove skewweness
+
 
 # Multiple linear regression on the training dataset
 fit_GPU <- lm(btcusd ~ ., data4)
