@@ -4,13 +4,13 @@
 
 # The dataset consists of daily (without weekends & holidays) prices in U.S.
 # dollars of: bitcoin, stock prices of the leading global manufacturers of GPUs,
-# Big Tech companies, prominent payment-processing corporations, and Tesla, Inc.
-# stock prices. It comes from Google Finance.
+# Big Tech companies, payment-processing corporations, and Tesla, Inc.stock
+# prices. It comes from Google Finance.
 
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# 
+# Descriptive statistics -- investigation of the dataset
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -69,10 +69,11 @@ ggplot(data, aes(Date)) +
   
   geom_line(aes(y = tsla, colour = "tsla")) 
 
+##############################################################################
 # Getting rid of "Date" column for the analysis
 data1<-data[-1]
-
-# This is one of the methods of transforming skewed data. (log(x)-log(x-1))
+##############################################################################
+# Transforming skewed data (log(x)-log(x-1))
 data2 <- as.data.frame(sapply(data1, function(x) diff(log(x), lag=1)))
 head(data2)
 dim(data2)
@@ -89,7 +90,7 @@ rmOutlier <- function(x){
   high <- quantile(x, 0.95, na.rm = T)
   out <- ifelse(x > high, high,ifelse(x < low, low, x))
   out }
-
+##############################################################################
 # Creating a dataset after winsorization
 data3      <- sapply(data2, rmOutlier)
 
@@ -119,7 +120,7 @@ data_test <- as.data.frame(data3[(n_train+1):nrow(data3), ])
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# 1st model - GPUs manufacturers
+# 1st model -- bitcoin price against all all other features
 ##############################################################################
 ##############################################################################
 ##############################################################################

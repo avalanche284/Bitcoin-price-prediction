@@ -163,6 +163,9 @@ summary(model4) # poor model
 model5 <- lm(btcusd ~ ., data = data2)
 summary(model5)
 
+##############################################################################
+# Residuals vs fitted START
+##############################################################################
 coeff <- model5$coefficients
 # What's the reason behing it? 
 # Get and plot residuals
@@ -195,7 +198,13 @@ ggplot(results, aes(Date)) +
   ylab('Returns') +
   ggtitle('bcusd') + theme(plot.title = element_text(hjust = 0.5))
 
-# Evaluating model prediction 
+##############################################################################
+# Evaluating model prediciton
+##############################################################################
+
+##############################################################################
+# (R)MSE & R^2
+##############################################################################
 # MSE method for evaluating model5 prediction (mean squared error)
 mse <- mean((results$Fitted-results$Observed)^2)
 print(mse)
@@ -208,6 +217,10 @@ SSE = sum((results$Fitted - results$Observed)^2)
 SST = sum( (results$Observed - mean(results$Observed) )^2)
 R2 = 1 - SSE/SST
 R2
+
+##############################################################################
+# Out oof sample PREDICTION
+##############################################################################
 
 # Splittin the sample in two, to make out-of-sample predictions ==using past data to make forecast in the future
 data2_in  <- data2[1:1253,]
@@ -341,6 +354,10 @@ pcor_mat3       <- p_correlations3$estimate
 corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
 corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
 
+##############################################################################
+# splitting the dataset
+##############################################################################
+
 # Setting a random seed so that results can be reproduced
 set.seed(1000)
 
@@ -350,8 +367,11 @@ n_train <- round(nrow(data3)*0.8)
 data_all   <- data3[sample(nrow(data3)), ]          
 data_train <- as.data.frame(data3[1:n_train, ])
 data_test <- as.data.frame(data3[(n_train+1):nrow(data3), ])
-###########################################################
+##############################################################################
+##############################################################################
 # LINEAR REGRESSION
+##############################################################################
+##############################################################################
 # Multiple linear regression on the training dataset
 fit1     <- lm(btcusd ~ ., data_train)
 summary(fit1)
@@ -366,6 +386,10 @@ summary(fit_step_b)
 fit_step   <- step(fit1, direction='both')
 summary(fit_step)
 # plot(fit_step)
+
+##############################################################################
+# Comapring results
+##############################################################################
 
 # Getting residuals and performing an F-test to compare the full model with the reduced one
 res      <- fit_step$residuals
@@ -389,6 +413,10 @@ m1 <- fit_step
 anova(m0,m1)
 m2 <- fit1
 anova(m1,m2)
+
+##############################################################################
+# PREDICTIONS
+##############################################################################
 
 # Making predictions on the test dataset
 predictions       <- predict(fit_step,data_test)
