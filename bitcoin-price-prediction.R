@@ -165,7 +165,7 @@ dmar
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# 1st model -- bitcoin price against GPUs manufacturers stock prices
+# 2nd model -- bitcoin price against GPUs manufacturers stock prices
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -176,18 +176,83 @@ dmar
 # Cards <- v + ma + axp + dfs
 # Tsla <- tsla
 # data1 a dataset containing prics before eliminating skewness
-GPU <- data.frame((data1$nvda + data1$amd)/2)
-TECH <- data.frame((data1$meta + data1$aapl + data1$amzn + data1$nflx + data1$googl + data1$msft)/6)
-CARD <- data.frame((data1$v + data1$ma + data1$dfs + data1$axp)/4)
-TSLA <- data.frame(data1$tsla)
+GPU <- data.frame((data$nvda + data$amd)/2)
+TECH <- data.frame((data$meta + data$aapl + data$amzn + data$nflx + data$googl + data$msft)/6)
+CARD <- data.frame((data$v + data$ma + data$dfs + data$axp)/4)
+TSLA <- data.frame(data$tsla)
 
-data_gr <- cbind(data1$btcusd, GPU, TECH, CARD, TSLA)
-colnames(data_gr) <- c("btcusd", "GPU", "TECH", "CARD", "TSLA")
+data_gr <- cbind(data$Date, data$btcusd, GPU, TECH, CARD, TSLA)
+colnames(data_gr) <- c("Date", "btcusd", "GPU", "TECH", "CARD", "TSLA")
 
+# Here can be done an analysis of some sort e.g. movement in the price for instance
 summary(data_gr)
 hist(data_gr)
+hist(data_gr$btcusd)
+hist(data_gr$GPU)
+hist(data_gr$TECH)
+hist(data_gr$CARD)
+hist(data_gr$TSLA)
 
 # now the new dataset can be tansformed to remove skewweness
+data_gr1<-data_gr[-1]
+
+# Transforming skewed data (log(x)-log(x-1))
+data_gr2 <- as.data.frame(sapply(data_gr1, function(x) diff(log(x), lag=1)))
+head(data_gr2)
+dim(data_gr2)
+head(data_gr2)
+summary(data_gr2)
+str(data_gr2)
+hist(data_gr2)
+hist(data_gr2$btcusd)
+hist(data_gr2$GPU)
+hist(data_gr2$TECH)
+hist(data_gr2$CARD)
+hist(data_gr2$TSLA)
+
+# Checking the distribution of btcusd in the sample
+boxplot(data_gr2$btcusd, main = "btcusd")
+
+# Dealing with (possible) outliers: winsorization
+rmOutlier <- function(x){
+  low  <- quantile(x, 0.05, na.rm = T)
+  high <- quantile(x, 0.95, na.rm = T)
+  out <- ifelse(x > high, high,ifelse(x < low, low, x))
+  out }
+##############################################################################
+# Creating a dataset after winsorization
+data_gr3      <- sapply(data_gr2, rmOutlier)
+
+
+# here you finished
+
+
+
+
+
+correlations3 <- cor(data_gr3)
+correlations3
+corrplot(correlations3, method="circle", type = "lower", diag = FALSE)
+corrplot(correlations3, method="number", type = "lower", diag = FALSE)
+
+# Checking partial correlations by using the pcor function 
+p_correlations3 <- pcor(data_gr3)
+pcor_mat3       <- p_correlations3$estimate
+
+# Visualizing the partial correlation plot
+corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
+corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
+
+data4 <- as.data.frame(data_gr3)
+
+
+
+
+
+
+
+
+
 
 
 # Multiple linear regression on the training dataset
