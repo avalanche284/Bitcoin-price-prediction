@@ -3,9 +3,11 @@
 # UNIPV 2023
 
 # The dataset consists of daily (without weekends & holidays) prices in U.S.
-# dollars of: bitcoin, stock prices of the leading global manufacturers of GPUs,
-# Big Tech companies, payment-processing corporations, and Tesla, Inc.stock
-# prices. It comes from Google Finance.
+# dollars of: bitcoin, stock prices of the leading global manufacturers of GPUs
+# (NVDIA, AMD), Big Tech companies (Alphabet, Amazon, Meta, Apple, Microsoft &
+# Netflix), payment-processing corporations (Visa, MasterCard, Discovery & 
+# American Express), and Tesla stock prices.
+# Data source: Google Finance.
 
 ##############################################################################
 ##############################################################################
@@ -44,7 +46,8 @@ str(data)
 plot(data[-1])
 stat.desc(data$btcusd)
 hist(data$btcusd) 
-boxplot(data$btcusd, main = "Boxplot of the Bitcoin price (Source: Google Finance)")
+boxplot(data$btcusd, main = "Boxplot of the Bitcoin price (Source: Google 
+        Finance)")
 
 # Plotting btc price change over time
 ggplot(data = data, aes(Date, btcusd)) + geom_line(colour='gold')
@@ -83,6 +86,7 @@ str(data2)
 
 # Checking the distribution of btcusd in the sample
 boxplot(data2$btcusd, main = "btcusd")
+hist(as.data.frame(data2))
 
 ##############################################################################
 # Dealing with (possible) outliers: winsorization
@@ -94,6 +98,8 @@ rmOutlier <- function(x){
 ##############################################################################
 # Creating a dataset after winsorization
 data3 <- sapply(data2, rmOutlier)
+
+hist(as.data.frame(data3))
 
 correlations3 <- cor(data3)
 correlations3
@@ -135,6 +141,33 @@ fit_1_step <- step(fit_1, direction='both')
 summary(fit_1_step) # showing the best regression
 # plot(fit_1_step)
 
+# 2. Model assessment
+fit1 <- fit_1_step$fitted.values
+date_1 <- data$Date[2:nrow(data)]
+results1 <- cbind.data.frame(date_1, data4$btcusd, fit1)
+colnames(results1) <- c("Date", "Observed", "Fitted")
+
+# Plotting observed vs fitted values
+ggplot(results1, aes(Date)) + 
+  geom_line(aes(y = Observed, colour = "Observed")) + 
+  geom_line(aes(y = Fitted, colour = "Fitted")) +
+  ylab('Returns') +
+  ggtitle("Btcusd") + theme(plot.title = element_text(hjust = 0.5))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # PREDICTION on the same dataset
 
 data4_test <- data4[round(0.8*nrow(data4)):nrow(data4),]
@@ -162,7 +195,6 @@ print(mae_1)
 dmar<-dm.test(fit_1_step$residuals,fit_1$residuals,alternative="two.sided")
 dmar
 
-
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -178,7 +210,8 @@ dmar
 # Tsla <- tsla
 # data1 a dataset containing prics before eliminating skewness
 GPU <- data.frame((data$nvda + data$amd)/2)
-TECH <- data.frame((data$meta + data$aapl + data$amzn + data$nflx + data$googl + data$msft)/6)
+TECH <- data.frame((data$meta + data$aapl + data$amzn + data$nflx + data$googl
+                    + data$msft)/6)
 CARD <- data.frame((data$v + data$ma + data$dfs + data$axp)/4)
 TSLA <- data.frame(data$tsla)
 ##############################################################################
@@ -194,7 +227,7 @@ hist(data_gr$TECH)
 hist(data_gr$CARD)
 hist(data_gr$TSLA)
 ##############################################################################
-# now the new dataset can be tansformed to remove skewweness
+# now the new dataset can be tansformed to remove skeweness
 data_gr1<-data_gr[-1]
 
 # Transforming skewed data (log(x)-log(x-1))
@@ -284,7 +317,6 @@ print(mae_gr)
 dmar_gr <-dm.test(fit_gr_step$residuals,fit_gr$residuals,alternative="two.sided")
 dmar_gr
 
-
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -292,7 +324,6 @@ dmar_gr
 ##############################################################################
 ##############################################################################
 ##############################################################################
-x <- print(mse_1)
 individual <- c(mse_1, rmse_1, mae_1)
 groups <- c(mse_gr, rmse_gr, mae_gr)
 data_results <- cbind(individual, groups)
