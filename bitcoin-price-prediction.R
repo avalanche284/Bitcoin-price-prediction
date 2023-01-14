@@ -299,6 +299,13 @@ data_results <- cbind(individual, groups)
 print(data_results)
 rownames <- c("MSE", "RMSE", "MAE")
 data_results <- as.data.frame(data_results, row.names = rownames)
-
 print(data_results)
+# Models with lower values of the error measures are preffered.
 
+# The answer
+# * Which model is the best model?
+#   The best model is the one that was chosen by the stepwise algorithm that
+#   consists of: btc ~ nvda + amzn + v + axp in which nvda has the lowest p-value. 
+# * Which of the groups provides the best bitcoin price prediction?
+#   Stepwise algorithm chose the model that consists of all of the cups in which
+#   GPU has the lowest p-value.
