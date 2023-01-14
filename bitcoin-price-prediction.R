@@ -84,15 +84,16 @@ str(data2)
 # Checking the distribution of btcusd in the sample
 boxplot(data2$btcusd, main = "btcusd")
 
+##############################################################################
 # Dealing with (possible) outliers: winsorization
 rmOutlier <- function(x){
-  low  <- quantile(x, 0.05, na.rm = T)
+  low <- quantile(x, 0.05, na.rm = T)
   high <- quantile(x, 0.95, na.rm = T)
   out <- ifelse(x > high, high,ifelse(x < low, low, x))
   out }
 ##############################################################################
 # Creating a dataset after winsorization
-data3      <- sapply(data2, rmOutlier)
+data3 <- sapply(data2, rmOutlier)
 
 correlations3 <- cor(data3)
 correlations3
@@ -120,7 +121,7 @@ set.seed(1000)
 ##############################################################################
 
 # Multiple linear regression on the training dataset
-fit_1     <- lm(btcusd ~ ., data4)
+fit_1 <- lm(btcusd ~ ., data4)
 summary(fit_1)
 
 # Performing a stepwise linear regression 
@@ -165,7 +166,7 @@ dmar
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# 2nd model -- bitcoin price against GPUs manufacturers stock prices
+# 2nd model -- bitcoin price against groups
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -180,7 +181,7 @@ GPU <- data.frame((data$nvda + data$amd)/2)
 TECH <- data.frame((data$meta + data$aapl + data$amzn + data$nflx + data$googl + data$msft)/6)
 CARD <- data.frame((data$v + data$ma + data$dfs + data$axp)/4)
 TSLA <- data.frame(data$tsla)
-
+##############################################################################
 data_gr <- cbind(data$Date, data$btcusd, GPU, TECH, CARD, TSLA)
 colnames(data_gr) <- c("Date", "btcusd", "GPU", "TECH", "CARD", "TSLA")
 
@@ -192,7 +193,7 @@ hist(data_gr$GPU)
 hist(data_gr$TECH)
 hist(data_gr$CARD)
 hist(data_gr$TSLA)
-
+##############################################################################
 # now the new dataset can be tansformed to remove skewweness
 data_gr1<-data_gr[-1]
 
@@ -212,89 +213,75 @@ hist(data_gr2$TSLA)
 
 # Checking the distribution of btcusd in the sample
 boxplot(data_gr2$btcusd, main = "btcusd")
-
+##############################################################################
 # Dealing with (possible) outliers: winsorization
 rmOutlier <- function(x){
   low  <- quantile(x, 0.05, na.rm = T)
   high <- quantile(x, 0.95, na.rm = T)
   out <- ifelse(x > high, high,ifelse(x < low, low, x))
   out }
+
 ##############################################################################
 # Creating a dataset after winsorization
-data_gr3      <- sapply(data_gr2, rmOutlier)
+data_gr3 <- sapply(data_gr2, rmOutlier)
 
-
-# here you finished
-
-
-
-
-
-correlations3 <- cor(data_gr3)
-correlations3
-corrplot(correlations3, method="circle", type = "lower", diag = FALSE)
-corrplot(correlations3, method="number", type = "lower", diag = FALSE)
+# Checking correlations
+correlations_3gr <- cor(data_gr3)
+correlations_3gr
+corrplot(correlations_3gr, method="circle", type = "lower", diag = FALSE)
+corrplot(correlations_3gr, method="number", type = "lower", diag = FALSE)
 
 # Checking partial correlations by using the pcor function 
-p_correlations3 <- pcor(data_gr3)
-pcor_mat3       <- p_correlations3$estimate
+p_correlations_3gr <- pcor(data_gr3)
+pcor_mat_3gr <- p_correlations_3gr$estimate
 
 # Visualizing the partial correlation plot
-corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
-corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
+corrplot(pcor_mat_3gr, method="circle", type = "lower", diag = FALSE)
+corrplot(pcor_mat_3gr, method="number", type = "lower", diag = FALSE) 
 
-data4 <- as.data.frame(data_gr3)
-
-
-
-
-
-
-
-
-
-
+##############################################################################
+data_gr4 <- as.data.frame(data_gr3)
 
 # Multiple linear regression on the training dataset
-fit_GPU <- lm(btcusd ~ ., data4)
-summary(fit_1)
+fit_gr <- lm(btcusd ~ ., data_gr4)
+summary(fit_gr)
 
 # Performing a stepwise linear regression 
-fit_1_step_f <- step(fit_1, direction='forward')
-summary(fit_1_step_f)
+fit_gr_step_f <- step(fit_gr, direction='forward')
+summary(fit_gr_step_f)
 
-fit_1_step_b <- step(fit_1, direction='backward')
-summary(fit_1_step_b)
+fit_gr_step_b <- step(fit_gr, direction='backward')
+summary(fit_gr_step_b)
 
-fit_1_step <- step(fit_1, direction='both')
-summary(fit_1_step) # showing the best regression
-# plot(fit_1_step)
+fit_gr_step <- step(fit_gr, direction='both')
+summary(fit_gr_step) # showing the best regression
+# plot(fit_gr_step)
 
 # PREDICTION on the same dataset
 
-data4_test <- data4[round(0.8*nrow(data4)):nrow(data4),]
+data_gr4_test <- data_gr4[round(0.8*nrow(data_gr4)):nrow(data_gr4),]
 
-# Making predictions on the data4_test
-predictions_1 <- predict(fit_1_step,data4_test)
-results_1 <- cbind(data4_test$btcusd,predictions_1) 
-colnames(results_1) <- c('Real','Predicted')
-results_1 <- as.data.frame(results_1)
+# Making predictions on the data_gr4_test
+predictions_gr <- predict(fit_gr_step,data_gr4_test)
+results_gr <- cbind(data_gr4_test$btcusd,predictions_gr) 
+colnames(results_gr) <- c('Real','Predicted')
+results_gr <- as.data.frame(results_gr)
 
 # Calculating error measures
 # MSE
-mse_1  <- mean((results_1$Real-results_1$Predicted)^2)
-print(mse_1)
+mse_gr <- mean((results_gr$Real-results_gr$Predicted)^2)
+print(mse_gr)
 
 # RMSE
-rmse_1 <- sqrt(mse_1)
-print(rmse_1)
+rmse_gr <- sqrt(mse_gr)
+print(rmse_gr)
 
 # MAE
-mae_1 <- mean(abs(results_1$Real-results_1$Predicted))
-print(mae_1)
+mae_gr <- mean(abs(results_gr$Real-results_gr$Predicted))
+print(mae_gr)
 
 # Diebold-Mariano test
-dmar<-dm.test(fit_1_step$residuals,fit_1$residuals,alternative="two.sided")
-dmar
+dmar_gr <-dm.test(fit_gr_step$residuals,fit_gr$residuals,alternative="two.sided")
+dmar_gr
 
 
