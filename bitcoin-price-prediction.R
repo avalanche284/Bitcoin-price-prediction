@@ -285,3 +285,20 @@ dmar_gr <-dm.test(fit_gr_step$residuals,fit_gr$residuals,alternative="two.sided"
 dmar_gr
 
 
+##############################################################################
+##############################################################################
+##############################################################################
+# Model comparison
+##############################################################################
+##############################################################################
+##############################################################################
+x <- print(mse_1)
+individual <- c(mse_1, rmse_1, mae_1)
+groups <- c(mse_gr, rmse_gr, mae_gr)
+data_results <- cbind(individual, groups)
+print(data_results)
+rownames <- c("MSE", "RMSE", "MAE")
+data_results <- as.data.frame(data_results, row.names = rownames)
+
+print(data_results)
+
