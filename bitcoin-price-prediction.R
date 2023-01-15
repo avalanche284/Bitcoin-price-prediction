@@ -12,7 +12,7 @@
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# Descriptive statistics -- investigation of the dataset
+# I Descriptive statistics -- investigation of the dataset
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -121,11 +121,12 @@ set.seed(1000)
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# 1st model -- bitcoin price against all all other features
+# II 1st model -- bitcoin price against all all other features
 ##############################################################################
 ##############################################################################
 ##############################################################################
 
+# 1. Building the model
 # Multiple linear regression on the training dataset
 fit_1 <- lm(btcusd ~ ., data4)
 summary(fit_1)
@@ -142,6 +143,21 @@ summary(fit_1_step) # showing the best regression
 # plot(fit_1_step)
 
 # 2. Model assessment
+
+# Getting and plotting residuals
+res1 <- fit_1_step$residuals
+# res <- residuals(fit_1_step)
+plot(res1, type='l')
+
+# Converting to DataFrame for gglpot
+res1 <- as.data.frame(res1)
+
+# Checking residuals' distribution 
+ggplot(res1,aes(res1)) +  geom_histogram(fill='blue',alpha=0.5, binwidth=0.003)
+
+# Some plots for model diagnostics
+plot(fit_1_step) # hitting return key you move from a plot to another
+
 fit1 <- fit_1_step$fitted.values
 date_1 <- data$Date[2:nrow(data)]
 results1 <- cbind.data.frame(date_1, data4$btcusd, fit1)
@@ -154,21 +170,7 @@ ggplot(results1, aes(Date)) +
   ylab('Returns') +
   ggtitle("Btcusd") + theme(plot.title = element_text(hjust = 0.5))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# PREDICTION on the same dataset
+# 3. Prediction on the same dataset
 
 data4_test <- data4[round(0.8*nrow(data4)):nrow(data4),]
 
@@ -177,8 +179,9 @@ predictions_1 <- predict(fit_1_step,data4_test)
 results_1 <- cbind(data4_test$btcusd,predictions_1) 
 colnames(results_1) <- c('Real','Predicted')
 results_1 <- as.data.frame(results_1)
+plot(results_1)
 
-# Calculating error measures
+# 4. Calculating error measures
 # MSE
 mse_1  <- mean((results_1$Real-results_1$Predicted)^2)
 print(mse_1)
@@ -198,7 +201,7 @@ dmar
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# 2nd model -- bitcoin price against groups
+# III 2nd model -- bitcoin price against groups
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -218,7 +221,6 @@ TSLA <- data.frame(data$tsla)
 data_gr <- cbind(data$Date, data$btcusd, GPU, TECH, CARD, TSLA)
 colnames(data_gr) <- c("Date", "btcusd", "GPU", "TECH", "CARD", "TSLA")
 
-# Here can be done an analysis of some sort e.g. movement in the price for instance
 summary(data_gr)
 hist(data_gr)
 hist(data_gr$btcusd)
@@ -275,7 +277,7 @@ corrplot(pcor_mat_3gr, method="number", type = "lower", diag = FALSE)
 ##############################################################################
 data_gr4 <- as.data.frame(data_gr3)
 
-# Multiple linear regression on the training dataset
+# 1. Multiple linear regression on the training dataset
 fit_gr <- lm(btcusd ~ ., data_gr4)
 summary(fit_gr)
 
@@ -290,7 +292,35 @@ fit_gr_step <- step(fit_gr, direction='both')
 summary(fit_gr_step) # showing the best regression
 # plot(fit_gr_step)
 
-# PREDICTION on the same dataset
+# 2. Model assessment
+
+# Getting and plotting residuals
+res_gr <- fit_gr_step$residuals
+# res <- residuals(fit_gr_step)
+plot(res_gr, type='l')
+
+# Converting to DataFrame for gglpot
+res_gr <- as.data.frame(res_gr)
+
+# Checking residuals' distribution 
+ggplot(res_gr,aes(res_gr)) +  geom_histogram(fill='blue',alpha=0.5, binwidth=0.003)
+
+# Some plots for model diagnostics
+plot(fit_gr_step) # hitting return key you move from a plot to another
+
+fitgr <- fit_gr_step$fitted.values
+date_1 <- data$Date[2:nrow(data)]
+resultsgr <- cbind.data.frame(date_1, data4$btcusd, fitgr)
+colnames(resultsgr) <- c("Date", "Observed", "Fitted")
+
+# Plotting observed vs fitted values
+ggplot(resultsgr, aes(Date)) + 
+  geom_line(aes(y = Observed, colour = "Observed")) + 
+  geom_line(aes(y = Fitted, colour = "Fitted")) +
+  ylab('Returns') +
+  ggtitle("Btcusd") + theme(plot.title = element_text(hjust = 0.5))
+
+# 3. PREDICTION on the same dataset
 
 data_gr4_test <- data_gr4[round(0.8*nrow(data_gr4)):nrow(data_gr4),]
 
@@ -300,7 +330,7 @@ results_gr <- cbind(data_gr4_test$btcusd,predictions_gr)
 colnames(results_gr) <- c('Real','Predicted')
 results_gr <- as.data.frame(results_gr)
 
-# Calculating error measures
+# 4. Calculating error measures
 # MSE
 mse_gr <- mean((results_gr$Real-results_gr$Predicted)^2)
 print(mse_gr)
@@ -320,7 +350,7 @@ dmar_gr
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# Model comparison
+# IV Model comparison
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -330,9 +360,27 @@ data_results <- cbind(individual, groups)
 print(data_results)
 rownames <- c("MSE", "RMSE", "MAE")
 data_results <- as.data.frame(data_results, row.names = rownames)
-print(data_results)
-# Models with lower values of the error measures are preffered.
+print(data_results) # a dataframe of te final compared error measures # RESULTS
+# Models with lower values of the error measures are prefferred.
 
+# Residuals vs fitted -- combination of two models
+results_combined <- cbind.data.frame(date_1, data4$btcusd, fitgr, fit1)
+colnames(results_combined) <- c("Date", "Observed", "Groups", "Best")
+
+ggplot(results_combined, aes(Date)) + 
+  geom_line(aes(y = Observed, colour = "Observed")) + 
+  geom_line(aes(y = Groups, colour = "Groups")) +
+  geom_line(aes(y = Best, colour = "Best")) +
+  ylab('variation') +
+  ggtitle("btcusd") + theme(plot.title = element_text(hjust = 0.5))
+
+##############################################################################
+##############################################################################
+##############################################################################
+# V Conclusion
+##############################################################################
+##############################################################################
+##############################################################################
 # The answer
 # * Which model is the best model?
 #   The best model is the one that was chosen by the stepwise algorithm that
