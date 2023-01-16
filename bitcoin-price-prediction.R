@@ -329,6 +329,7 @@ predictions_gr <- predict(fit_gr_step,data_gr4_test)
 results_gr <- cbind(data_gr4_test$btcusd,predictions_gr) 
 colnames(results_gr) <- c('Real','Predicted')
 results_gr <- as.data.frame(results_gr)
+plot(results_gr)
 
 # 4. Calculating error measures
 # MSE
