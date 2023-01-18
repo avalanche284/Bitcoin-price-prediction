@@ -103,16 +103,16 @@ hist(as.data.frame(data3))
 
 correlations3 <- cor(data3)
 correlations3
-corrplot(correlations3, method="circle", type = "lower", diag = FALSE)
-corrplot(correlations3, method="number", type = "lower", diag = FALSE)
+corrplot.mixed(correlations3, lower = "circle", upper = "number")
 
 # Checking partial correlations by using the pcor function 
 p_correlations3 <- pcor(data3)
 pcor_mat3       <- p_correlations3$estimate
 
 # Visualizing the partial correlation plot
-corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
-corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
+corrplot.mixed(pcor_mat3, lower = "circle", upper = "number")
+#corrplot(pcor_mat3, method="circle", type = "lower", diag = FALSE)
+#corrplot(pcor_mat3, method="number", type = "lower", diag = FALSE) 
 
 data4 <- as.data.frame(data3)
 
@@ -156,7 +156,7 @@ res1 <- as.data.frame(res1)
 ggplot(res1,aes(res1)) +  geom_histogram(fill='blue',alpha=0.5, binwidth=0.003)
 
 # Some plots for model diagnostics
-plot(fit_1_step) # hitting return key you move from a plot to another
+#plot(fit_1_step) # hitting return key you move from a plot to another
 
 fit1 <- fit_1_step$fitted.values
 date_1 <- data$Date[2:nrow(data)]
@@ -263,8 +263,7 @@ data_gr3 <- sapply(data_gr2, rmOutlier)
 # Checking correlations
 correlations_3gr <- cor(data_gr3)
 correlations_3gr
-corrplot(correlations_3gr, method="circle", type = "lower", diag = FALSE)
-corrplot(correlations_3gr, method="number", type = "lower", diag = FALSE)
+corrplot.mixed(correlations_3gr, lower = "circle", upper = "number")
 
 # Checking partial correlations by using the pcor function 
 p_correlations_3gr <- pcor(data_gr3)
@@ -276,6 +275,9 @@ corrplot(pcor_mat_3gr, method="number", type = "lower", diag = FALSE)
 
 ##############################################################################
 data_gr4 <- as.data.frame(data_gr3)
+
+# Setting a random seed so that results can be reproduced
+set.seed(1000)
 
 # 1. Multiple linear regression on the training dataset
 fit_gr <- lm(btcusd ~ ., data_gr4)
@@ -306,7 +308,7 @@ res_gr <- as.data.frame(res_gr)
 ggplot(res_gr,aes(res_gr)) +  geom_histogram(fill='blue',alpha=0.5, binwidth=0.003)
 
 # Some plots for model diagnostics
-plot(fit_gr_step) # hitting return key you move from a plot to another
+#plot(fit_gr_step)
 
 fitgr <- fit_gr_step$fitted.values
 date_1 <- data$Date[2:nrow(data)]
@@ -361,8 +363,8 @@ data_results <- cbind(individual, groups)
 print(data_results)
 rownames <- c("MSE", "RMSE", "MAE")
 data_results <- as.data.frame(data_results, row.names = rownames)
-print(data_results) # a dataframe of te final compared error measures # RESULTS
-# Models with lower values of the error measures are prefferred.
+print(data_results) # a data frame of the final compared error measures # RESULTS
+# Models with lower values of the error measures are preferred.
 
 # Residuals vs fitted -- combination of two models
 results_combined <- cbind.data.frame(date_1, data4$btcusd, fitgr, fit1)
@@ -372,7 +374,7 @@ ggplot(results_combined, aes(Date)) +
   geom_line(aes(y = Observed, colour = "Observed")) + 
   geom_line(aes(y = Groups, colour = "Groups")) +
   geom_line(aes(y = Best, colour = "Best")) +
-  ylab('variation') +
+  ylab('Returns') +
   ggtitle("btcusd") + theme(plot.title = element_text(hjust = 0.5))
 
 ##############################################################################
