@@ -1,5 +1,4 @@
 # Bitcoin price prediction
-#### Using multiple regression models
 ### Keynote presentation: [HERE](https://www.youtube.com/watch?v=lG2Rm_B1u7E)
 
 ![YouTube screenshot](preview.png)
@@ -14,13 +13,13 @@ American Express), and Tesla stock prices.
 The dataset was prepared with the use of Google Finance. it starts from 11/19/2015 till 12/30/2022.
 ### Operations on the dataset
 Skewed data were normalized by use of log transformation. The winsorization method was conducted in order to deal with possible outliers.
-Correlation plot considering all features
 ![cor1](cor1.png)
-
+Correlation plot considering all features.
 ## Models
 The first model consists of the price of bitcoin against all other stock prices. The second one: bitcoin against four groups. Each of the groups covers the average stock price of the group participant. So, for example, the `TECH` group has the mean price of Big Tech companies: Alphabet, Apple, Meta, Amazon, Netflix & Microsoft.
-Correlation plot regarding this model.
 ![cor2](cor2.png)
+Correlation plot regarding this model.
+
 ## Method
 Multiple linear regression has been used in this project. Choosing model was conducted using a stepwise algorithm implemented in R language. 
 ## Results
@@ -30,8 +29,9 @@ consists of:
 btc ~ nvda + amzn + v + axp
 ```
 in which `nvda` has the lowest p-value.
-Final plot: residuals vs. fitted
 ![residuals](residuals.png)
+Final plot: residuals vs. fitted
+
 Summing up, neither of the models provides satisfying results to be used in practice -- no significant p-value and meager R-squared value are one of the reasons for this statement. 
 
 ## Files
