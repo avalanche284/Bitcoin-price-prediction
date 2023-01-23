@@ -1,2 +1,57 @@
-# Bitcoin-price-prediction
-### Keynote presentation:  [HERE](https://www.youtube.com/watch?v=lG2Rm_B1u7E)
+# Bitcoin price prediction
+#### Using multiple regression models
+### My Keynote presentation:  [HERE](https://www.youtube.com/watch?v=lG2Rm_B1u7E)
+
+![YouTube screenshot](preview.png)
+
+## Objective
+The objective of the project was to find a multiple regression model that would be able to predict price of cryptocurrency bitcoin.
+
+## Dataset
+### Description
+The dataset consists of daily (without weekends & holidays) prices in U.S. dollars of: bitcoin, stock prices of the leading global manufacturers of GPUs (NVDIA & AMD), Big Tech companies (Alphabet, Amazon, Meta, Apple, Microsoft & Netflix), payment-processing corporations (Visa, MasterCard, Discovery & 
+American Express), and Tesla stock prices.
+### Source & scope
+The dataset was coined by use of Google Finance. it starts from 11/19/2015 till 12/30/2022.
+### Operations on the dataset
+Skewed data were normalized by use of log tranformation. Winsorization method was conducted in order to deal with possible outliers.
+Correlation plot considering all features
+![cor1](cor1.png)
+
+## Models
+The first model consists of pric of bitcoin against all other stock prices. The second one: bitcoin against four groups. Each of the group covers average stock price of group participant. So, for example `TECH` group has mean price of Big Tech companies: Alphabet, Apple, Meta, Amazon, Netflix & Microsoft.
+Correltion plot regarding this model.
+![cor2](cor2.png)
+## Method
+Multiple linear regession has been used in this project. Choosing model was conducted by use of stepwise algorithm implemented in R language. 
+## Results
+The best model is the one that was chosen by the stepwise algorithm that
+consists of:
+```
+btc ~ nvda + amzn + v + axp
+```
+in which `nvda` has the lowest p-value.
+
+Summing up, neither of the models provides satisfiyng results to be used in practice. Not significant p-value and very low R-squared value are one of the reasons for this statement. 
+
+## Files
+- bitcoin-price-prediction.R
+- dataset.xlsx
+
+### **bitcoin-price-prediction.R**
+This is the main file of the project. The whole R code is coverd here. In order to be usable the following packages should loaded:
+```
+library(DescTools)
+library(ggplot2)
+library(dplyr)
+library(Hmisc)
+library(pastecs)
+library(corrplot)
+library(ppcor)
+library(readxl)
+library(forecast)
+```
+ ### **dataset.xlsx**
+This is the dataset of the project. 
+
+<sub>This work is part of my exam in Financial Data Science @ University of Pavia in Italy.</sub>
