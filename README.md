@@ -1,7 +1,7 @@
 # Bitcoin price prediction
 ### Keynote presentation: [HERE](https://www.youtube.com/watch?v=lG2Rm_B1u7E)
 
-![YouTube screenshot](preview.png)
+![YouTube screenshot](preview2.png)
 
 ## Objective
 The project's objective was to find a multiple regression model that could predict the price of the cryptocurrency bitcoin.
