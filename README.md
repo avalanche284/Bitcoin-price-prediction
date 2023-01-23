@@ -10,7 +10,7 @@ The project's objective was to find a multiple regression model that could predi
 The dataset consists of daily (without weekends & holidays) prices in U.S. dollars of bitcoin, stock prices of the leading global manufacturers of GPUs (NVIDIA & AMD), Big Tech companies (Alphabet, Amazon, Meta, Apple, Microsoft & Netflix), payment-processing corporations (Visa, MasterCard, Discovery & 
 American Express), and Tesla stock prices.
 ### Source & scope
-The dataset was prepared with the use of Google Finance. it starts from 11/19/2015 till 12/30/2022.
+The dataset was prepared with the use of Google Finance. It starts from 11/19/2015 till 12/30/2022.
 ### Operations on the dataset
 Skewed data were normalized by use of log transformation. The winsorization method was conducted in order to deal with possible outliers.
 ![cor1](cor1.png)
@@ -54,4 +54,4 @@ library(forecast)
  ### **dataset.xlsx**
 This is the dataset of the project. 
 
-<sub>This work is part of my exam in Financial Data Science @ the University of Pavia in Italy.</sub>
+<sub>This work is part of my exam in Financial Data Science @ the University of Pavia, Italy.</sub>
